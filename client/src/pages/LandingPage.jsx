@@ -62,20 +62,8 @@ export default function LandingPage() {
       <div className="landing-background-image">
         <img src="/images/gallery-1.jpg" alt="Wedding couple" />
       </div>
-      <div className="landing-tint" />
       <div className="landing-overlay" />
       <div className="landing-glow" />
-
-      <svg className="landing-leaf landing-leaf-tl" viewBox="0 0 120 160" aria-hidden="true">
-        <path d="M4 8C44 24 66 58 60 100C56 128 34 148 8 154" />
-        <path d="M14 34C34 42 46 60 44 82" />
-        <path d="M20 66C36 70 46 84 44 100" />
-      </svg>
-      <svg className="landing-leaf landing-leaf-br" viewBox="0 0 120 160" aria-hidden="true">
-        <path d="M116 152C76 136 54 102 60 60C64 32 86 12 112 6" />
-        <path d="M106 126C86 118 74 100 76 78" />
-        <path d="M100 94C84 90 74 76 76 60" />
-      </svg>
 
       <section className="landing-card landing-card-overlay">
         <div className="landing-copy landing-copy-overlay">
