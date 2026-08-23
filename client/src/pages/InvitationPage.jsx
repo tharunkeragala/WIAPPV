@@ -128,9 +128,9 @@ export default function InvitationPage() {
         </div>
 
         <div className="family-panel">
-          <div><span>GROOM'S FAMILY</span><h3>{settings.groomName}</h3><p>Son of {settings.groomParents}</p></div>
-          <div className="family-monogram">&</div>
           <div><span>BRIDE'S FAMILY</span><h3>{settings.brideName}</h3><p>Daughter of {settings.brideParents}</p></div>
+          <div className="family-monogram">&</div>
+          <div><span>GROOM'S FAMILY</span><h3>{settings.groomName}</h3><p>Son of {settings.groomParents}</p></div>
         </div>
 
         <div className="schedule-wrap">

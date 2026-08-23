@@ -5,6 +5,8 @@ import {
   ExternalLink,
   Link2,
   LogOut,
+  ArrowDown,
+  ArrowUp,
   Plus,
   RefreshCw,
   Save,
@@ -270,6 +272,34 @@ export default function AdminPage() {
     }
   }
 
+  function updateProgramItem(index, patch) {
+    const events = [...(settings.events || [])];
+    events[index] = { ...events[index], ...patch };
+    setSettings({ ...settings, events });
+  }
+
+  function addProgramItem() {
+    setSettings({
+      ...settings,
+      events: [...(settings.events || []), { time: '', title: '', description: '' }]
+    });
+  }
+
+  function removeProgramItem(index) {
+    setSettings({
+      ...settings,
+      events: (settings.events || []).filter((_, itemIndex) => itemIndex !== index)
+    });
+  }
+
+  function moveProgramItem(index, direction) {
+    const events = [...(settings.events || [])];
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= events.length) return;
+    [events[index], events[targetIndex]] = [events[targetIndex], events[index]];
+    setSettings({ ...settings, events });
+  }
+
   async function downloadCsv(type) {
     try {
       const response = await fetch(`/api/admin/export/${type}.csv`, {
@@ -443,6 +473,30 @@ export default function AdminPage() {
 
         {tab === 'settings' && settings && (
           <>
+            <div className="admin-panel programme-panel">
+              <div className="panel-title">
+                <div><Clock3 size={18} /><h2>Wedding Programme</h2></div>
+                <p>Add the ceremony and reception schedule shown on the invitation.</p>
+              </div>
+              <div className="programme-list">
+                {(settings.events || []).map((event, index) => (
+                  <div className="programme-row" key={`programme-${index}`}>
+                    <div className="programme-order">
+                      <button type="button" title="Move up" disabled={index === 0} onClick={() => moveProgramItem(index, -1)}><ArrowUp size={15} /></button>
+                      <span>{index + 1}</span>
+                      <button type="button" title="Move down" disabled={index === (settings.events || []).length - 1} onClick={() => moveProgramItem(index, 1)}><ArrowDown size={15} /></button>
+                    </div>
+                    <label><span>Time</span><input value={event.time || ''} placeholder="10:00 AM" onChange={(e) => updateProgramItem(index, { time: e.target.value })} /></label>
+                    <label><span>Programme item</span><input value={event.title || ''} placeholder="Poruwa Ceremony" onChange={(e) => updateProgramItem(index, { title: e.target.value })} /></label>
+                    <label className="programme-description"><span>Description</span><input value={event.description || ''} placeholder="Traditional wedding ceremony" onChange={(e) => updateProgramItem(index, { description: e.target.value })} /></label>
+                    <button type="button" className="danger-icon" title="Remove programme item" onClick={() => removeProgramItem(index)}><Trash2 size={16} /></button>
+                  </div>
+                ))}
+              </div>
+              <button type="button" className="outline-admin-button" onClick={addProgramItem}><Plus size={16} /> Add Programme Item</button>
+              <p className="programme-save-note">Save Wedding Details below to publish programme changes.</p>
+            </div>
+
             <div className="admin-panel gallery-upload-panel">
               <div className="panel-title">
                 <div><Upload size={18} /><h2>Invitation Gallery</h2></div>
