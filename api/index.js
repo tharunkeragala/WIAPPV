@@ -8,6 +8,7 @@ const {
   writeSettings,
   invitesToCsv,
   rsvpsToCsv,
+  rsvpDetailsToCsv,
   makeId,
   makeToken
 } = require('../lib/store');
@@ -15,7 +16,7 @@ const {
 const app = express();
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'change-this-password';
 const ADMIN_API_TOKEN = process.env.ADMIN_API_TOKEN || 'change-this-long-random-token';
-const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || 'http://localhost:3000';
+const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
 
 app.use(express.json({ limit: '2mb' }));
 app.use('/api', (_req, res, next) => {
@@ -57,13 +58,19 @@ function publicInvite(invitee, settings, rsvp) {
   };
 }
 
-function adminInvite(invitee, rsvp) {
+function getPublicBaseUrl(req) {
+  if (PUBLIC_BASE_URL) return PUBLIC_BASE_URL;
+  const protocol = String(req.headers['x-forwarded-proto'] || req.protocol || 'https').split(',')[0];
+  return `${protocol}://${req.get('host')}`;
+}
+
+function adminInvite(invitee, rsvp, req) {
   return {
     ...invitee,
     rsvpStatus: rsvp.status || 'Pending',
     rsvpMessage: rsvp.message || '',
     rsvpAt: rsvp.respondedAt || null,
-    inviteLink: `${PUBLIC_BASE_URL}/i/${invitee.token}`
+    inviteLink: `${getPublicBaseUrl(req)}/i/${invitee.token}`
   };
 }
 
@@ -117,10 +124,10 @@ app.post('/api/admin/login', (req, res) => {
   res.json({ token: ADMIN_API_TOKEN });
 });
 
-app.get('/api/admin/invitees', adminOnly, async (_req, res) => {
+app.get('/api/admin/invitees', adminOnly, async (req, res) => {
   const invitees = await readInvitees();
   const rsvps = await readRsvps();
-  res.json(invitees.map((item) => adminInvite(item, getRsvpForInvitee(item.id, rsvps))));
+  res.json(invitees.map((item) => adminInvite(item, getRsvpForInvitee(item.id, rsvps), req)));
 });
 
 app.post('/api/admin/invitees', adminOnly, async (req, res) => {
@@ -162,7 +169,7 @@ app.post('/api/admin/invitees', adminOnly, async (req, res) => {
   rsvps.unshift({ inviteeId: invitee.id, status: 'Pending', message: '', respondedAt: '', updatedAt: now });
   await writeRsvps(rsvps);
 
-  res.status(201).json(adminInvite(invitee, getRsvpForInvitee(invitee.id, rsvps)));
+  res.status(201).json(adminInvite(invitee, getRsvpForInvitee(invitee.id, rsvps), req));
 });
 
 app.put('/api/admin/invitees/:id', adminOnly, async (req, res) => {
@@ -191,7 +198,7 @@ app.put('/api/admin/invitees/:id', adminOnly, async (req, res) => {
   await writeInvitees(invitees);
 
   const rsvp = getRsvpForInvitee(invitee.id, await readRsvps());
-  res.json(adminInvite(invitee, rsvp));
+  res.json(adminInvite(invitee, rsvp, req));
 });
 
 app.delete('/api/admin/invitees/:id', adminOnly, async (req, res) => {
@@ -215,7 +222,7 @@ app.post('/api/admin/invitees/:id/regenerate-link', adminOnly, async (req, res) 
   await writeInvitees(invitees);
 
   const rsvp = getRsvpForInvitee(invitee.id, await readRsvps());
-  res.json(adminInvite(invitee, rsvp));
+  res.json(adminInvite(invitee, rsvp, req));
 });
 
 app.get('/api/admin/settings', adminOnly, async (_req, res) => {
@@ -257,6 +264,12 @@ app.get('/api/admin/export/rsvps.csv', adminOnly, async (_req, res) => {
   res.set('Content-Type', 'text/csv');
   res.set('Content-Disposition', 'attachment; filename="rsvps.csv"');
   res.send(rsvpsToCsv(await readRsvps()));
+});
+
+app.get('/api/admin/export/rsvp-details.csv', adminOnly, async (_req, res) => {
+  res.set('Content-Type', 'text/csv');
+  res.set('Content-Disposition', 'attachment; filename="rsvp-details.csv"');
+  res.send(rsvpDetailsToCsv(await readInvitees(), await readRsvps()));
 });
 
 // Local-only convenience: `node api/index.js` still boots a plain server.

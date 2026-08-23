@@ -299,7 +299,7 @@ export default function AdminPage() {
               </div>
               <div className="csv-actions">
                 <button type="button" className="outline-admin-button" onClick={() => downloadCsv('invitees')}><Download size={16} /> Invitees CSV</button>
-                <button type="button" className="outline-admin-button" onClick={() => downloadCsv('rsvps')}><Download size={16} /> RSVP CSV</button>
+                <button type="button" className="outline-admin-button" onClick={() => downloadCsv('rsvp-details')}><Download size={16} /> RSVP Details CSV</button>
               </div>
             </div>
 

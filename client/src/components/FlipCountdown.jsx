@@ -13,11 +13,28 @@ function calculate(target) {
 
 function FlipUnit({ label, value }) {
   const padded = String(value).padStart(2, '0');
+  const [displayed, setDisplayed] = useState(padded);
+  const [nextValue, setNextValue] = useState(padded);
+  const [flipping, setFlipping] = useState(false);
+
+  useEffect(() => {
+    if (displayed === padded) return;
+    setNextValue(padded);
+    setFlipping(true);
+    const animation = window.setTimeout(() => {
+      setDisplayed(padded);
+      setFlipping(false);
+    }, 620);
+    return () => window.clearTimeout(animation);
+  }, [displayed, padded]);
+
   return (
     <div className="flip-unit">
-      <div className="flip-card" aria-label={`${value} ${label}`}>
-        <span className="flip-top">{padded}</span>
-        <span className="flip-bottom">{padded}</span>
+      <div className={`flip-card${flipping ? ' is-flipping' : ''}`} aria-label={`${value} ${label}`}>
+        <span className="flip-top">{flipping ? nextValue : displayed}</span>
+        <span className="flip-bottom">{displayed}</span>
+        {flipping && <span className="flip-leaf flip-leaf-front">{displayed}</span>}
+        {flipping && <span className="flip-leaf flip-leaf-back">{nextValue}</span>}
         <span className="flip-divider" />
       </div>
       <span className="flip-label">{label}</span>

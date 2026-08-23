@@ -21,7 +21,7 @@ A personalised mobile-first wedding invitation web app with a public invitation 
 - Copy/share/open invitation links
 - RSVP dashboard counts
 - Wedding details configuration
-- Download invitee CSV and RSVP CSV from the admin page
+- Download invitee CSV and joined RSVP details CSV from the admin page
 
 ## CSV storage
 
@@ -164,11 +164,13 @@ For a local production test:
 PUBLIC_BASE_URL=http://localhost:4000
 ```
 
-For production:
+For production, set this to the hosted invitation address:
 
 ```env
 PUBLIC_BASE_URL=https://invite.example.lk
 ```
+
+If `PUBLIC_BASE_URL` is not set, admin links use the current request host. This means Vercel deployments automatically generate links with the hosted web address instead of localhost.
 
 ## Replace images
 

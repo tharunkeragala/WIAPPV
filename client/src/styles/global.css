@@ -66,7 +66,9 @@ img { display: block; max-width: 100%; }
 .landing-glow {
   background: radial-gradient(circle at center, rgba(255,255,255,.08), transparent 55%);
   pointer-events: none;
+  animation: drift-glow 9s ease-in-out infinite alternate;
 }
+@keyframes drift-glow { from { transform: scale(1); opacity: .65; } to { transform: scale(1.12) translate(2%, -1%); opacity: 1; } }
 .landing-grain {
   opacity: .08;
   pointer-events: none;
@@ -261,6 +263,11 @@ img { display: block; max-width: 100%; }
 .flip-top, .flip-bottom { position: absolute; inset: 0; display: grid; place-items: center; }
 .flip-top { clip-path: inset(0 0 50% 0); background: linear-gradient(#27211c, #211c18); }
 .flip-bottom { clip-path: inset(50% 0 0 0); background: linear-gradient(#181512, #211c18); }
+.flip-leaf { position: absolute; inset: 0; display: grid; place-items: center; backface-visibility: hidden; z-index: 3; transform-origin: center; }
+.flip-leaf-front { clip-path: inset(0 0 50% 0); background: linear-gradient(#27211c, #211c18); animation: flip-front .62s ease-in forwards; }
+.flip-leaf-back { clip-path: inset(50% 0 0 0); background: linear-gradient(#181512, #211c18); animation: flip-back .62s ease-out forwards; transform: rotateX(90deg); }
+@keyframes flip-front { from { transform: rotateX(0); } to { transform: rotateX(-90deg); } }
+@keyframes flip-back { from { transform: rotateX(90deg); } to { transform: rotateX(0); } }
 .flip-divider { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(255,255,255,.12); z-index: 4; }
 .flip-label { display: block; margin-top: 10px; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: #c8bba9; }
 .paper-section { padding: clamp(72px, 9vw, 120px) clamp(22px, 7vw, 100px); background: var(--paper); }
@@ -405,8 +412,9 @@ img { display: block; max-width: 100%; }
   .invite-hero h1 { font-size: 82px; }
   .hero-date-row { gap: 11px; font-size: 9px; }
   .hero-date-row strong { padding: 0 11px; }
-  .flip-unit { width: 68px; }
-  .flip-card { height: 72px; font-size: 35px; }
+  .flip-countdown { gap: 14px 8px; }
+  .flip-unit { width: calc(50% - 8px); max-width: 92px; }
+  .flip-card { height: 74px; font-size: 36px; }
   .schedule-item { grid-template-columns: 1fr; gap: 8px; }
   .gallery-grid { grid-template-columns: 1fr; grid-auto-rows: 280px; }
   .gallery-item-1 { grid-row: auto; }
@@ -421,6 +429,10 @@ img { display: block; max-width: 100%; }
   .admin-panel { padding: 16px; }
   .panel-title, .guest-toolbar { flex-direction: column; }
   .search-input { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
 
 /* admin CSV storage + explicit row save */
