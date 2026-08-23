@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   Copy,
+  Clock3,
   Download,
   ExternalLink,
   Link2,
@@ -337,7 +338,7 @@ export default function AdminPage() {
     return (
       <main className="admin-login-page">
         <form className="admin-login-card" onSubmit={login}>
-          <div className="admin-logo">K <span>&</span> N</div>
+          <div className="admin-logo">T <span>&</span> S</div>
           <h1>Wedding Admin</h1>
           <p>Manage invitees, reserved family counts, private links and wedding details.</p>
           <label>
