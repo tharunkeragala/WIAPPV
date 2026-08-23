@@ -11,32 +11,12 @@ function calculate(target) {
   };
 }
 
-function FlipUnit({ label, value }) {
+function CountdownUnit({ label, value }) {
   const padded = String(value).padStart(2, '0');
-  const [displayed, setDisplayed] = useState(padded);
-  const [nextValue, setNextValue] = useState(padded);
-  const [flipping, setFlipping] = useState(false);
-
-  useEffect(() => {
-    if (displayed === padded) return;
-    setNextValue(padded);
-    setFlipping(true);
-    const animation = window.setTimeout(() => {
-      setDisplayed(padded);
-      setFlipping(false);
-    }, 620);
-    return () => window.clearTimeout(animation);
-  }, [displayed, padded]);
 
   return (
-    <div className="flip-unit">
-      <div className={`flip-card${flipping ? ' is-flipping' : ''}`} aria-label={`${value} ${label}`}>
-        <span className="flip-top">{flipping ? nextValue : displayed}</span>
-        <span className="flip-bottom">{displayed}</span>
-        {flipping && <span className="flip-leaf flip-leaf-front">{displayed}</span>}
-        {flipping && <span className="flip-leaf flip-leaf-back">{nextValue}</span>}
-        <span className="flip-divider" />
-      </div>
+    <div className="countdown-unit">
+      <strong className="countdown-value" aria-label={`${value} ${label}`}>{padded}</strong>
       <span className="flip-label">{label}</span>
     </div>
   );
@@ -53,11 +33,11 @@ export default function FlipCountdown({ targetDate }) {
   }, [targetDate]);
 
   return (
-    <div className="flip-countdown">
-      <FlipUnit label="Days" value={time.days} />
-      <FlipUnit label="Hours" value={time.hours} />
-      <FlipUnit label="Minutes" value={time.minutes} />
-      <FlipUnit label="Seconds" value={time.seconds} />
+    <div className="countdown">
+      <CountdownUnit label="Days" value={time.days} />
+      <CountdownUnit label="Hours" value={time.hours} />
+      <CountdownUnit label="Minutes" value={time.minutes} />
+      <CountdownUnit label="Seconds" value={time.seconds} />
     </div>
   );
 }
