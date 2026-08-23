@@ -264,7 +264,7 @@ export default function AdminPage() {
   return (
     <main className="admin-page">
       <aside className="admin-sidebar">
-        <div><div className="admin-logo">K <span>&</span> N</div><small>Wedding Console</small></div>
+        <div><div className="admin-logo">T <span>&</span> S</div><small>Wedding Console</small></div>
         <nav>
           <button type="button" className={tab === 'invitees' ? 'active' : ''} onClick={() => setTab('invitees')}><UsersRound size={18} /> Invitees</button>
           <button type="button" className={tab === 'settings' ? 'active' : ''} onClick={() => setTab('settings')}><Save size={18} /> Wedding Details</button>
