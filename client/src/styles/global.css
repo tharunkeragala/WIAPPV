@@ -251,7 +251,7 @@ img { display: block; max-width: 100%; }
 .hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(31,26,23,.12), rgba(31,26,23,.55)); }
 .hero-content { position: relative; z-index: 2; width: min(880px, 90%); padding-top: 60px; }
 .hero-kicker { opacity: .88; }
-.invite-hero h1 { max-width: 100%; margin: 18px auto 8px; color: #fffaf2; font-family: 'Cormorant Garamond', serif; font-size: clamp(76px, 11vw, 138px); font-weight: 600; letter-spacing: .015em; line-height: .9; overflow-wrap: anywhere; text-shadow: 0 4px 30px rgba(0,0,0,.3); }
+.invite-hero h1 { font-size: clamp(84px, 12vw, 160px); margin: 18px 0 8px; line-height: .8; text-shadow: 0 4px 30px rgba(0,0,0,.22); }
 .personal-greeting { font-family: 'Cormorant Garamond', serif; font-size: clamp(20px, 2.5vw, 30px); margin: 24px auto; max-width: 720px; }
 .hero-date-row { display: flex; align-items: center; justify-content: center; gap: 28px; margin: 28px 0 36px; text-transform: uppercase; letter-spacing: .12em; font-size: 12px; }
 .hero-date-row strong { padding: 0 28px; border-left: 1px solid rgba(255,255,255,.5); border-right: 1px solid rgba(255,255,255,.5); }
@@ -400,7 +400,7 @@ img { display: block; max-width: 100%; }
   .landing-invitee-panel, .landing-date-panel { border-radius: 20px; }
   .landing-open-button { width: 100%; max-width: 320px; }
   .invite-hero { background-position: 64% center; }
-  .invite-hero h1 { width: 100%; font-size: clamp(64px, 18vw, 92px); line-height: .94; }
+  .invite-hero h1 { font-size: 82px; }
   .hero-date-row { gap: 11px; font-size: 9px; }
   .hero-date-row strong { padding: 0 11px; }
   .countdown { width: 100%; flex-wrap: nowrap; gap: 6px; }
