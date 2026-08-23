@@ -10,6 +10,7 @@ import {
   Save,
   Share2,
   Trash2,
+  Upload,
   UsersRound
 } from 'lucide-react';
 import { adminHeaders, api } from '../api';
@@ -210,6 +211,65 @@ export default function AdminPage() {
     }
   }
 
+  function prepareImage(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const image = new Image();
+        image.onload = () => {
+          const scale = Math.min(1, 1400 / image.width, 1400 / image.height);
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(image.width * scale));
+          canvas.height = Math.max(1, Math.round(image.height * scale));
+          canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.82));
+        };
+        image.onerror = () => reject(new Error(`Could not read ${file.name}.`));
+        image.src = reader.result;
+      };
+      reader.onerror = () => reject(new Error(`Could not read ${file.name}.`));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function uploadGalleryImages(e) {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (!files.length) return;
+
+    try {
+      let nextSettings = settings;
+      for (const file of files) {
+        if (!file.type.startsWith('image/')) throw new Error(`${file.name} is not an image.`);
+        const image = await prepareImage(file);
+        nextSettings = await api('/api/admin/gallery', {
+          method: 'POST',
+          headers: adminHeaders(),
+          body: JSON.stringify({ image })
+        });
+      }
+      setSettings(nextSettings);
+      setNotice(`${files.length} gallery image${files.length === 1 ? '' : 's'} uploaded.`);
+    } catch (err) {
+      setNotice(err.message);
+    }
+  }
+
+  async function removeGalleryImage(index) {
+    try {
+      const gallery = (settings.gallery || []).filter((_, itemIndex) => itemIndex !== index);
+      const result = await api('/api/admin/settings', {
+        method: 'PUT',
+        headers: adminHeaders(),
+        body: JSON.stringify({ gallery })
+      });
+      setSettings(result);
+      setNotice('Gallery image removed.');
+    } catch (err) {
+      setNotice(err.message);
+    }
+  }
+
   async function downloadCsv(type) {
     try {
       const response = await fetch(`/api/admin/export/${type}.csv`, {
@@ -382,13 +442,33 @@ export default function AdminPage() {
         )}
 
         {tab === 'settings' && settings && (
-          <form className="admin-panel settings-form" onSubmit={saveSettings}>
-            <div className="panel-title">
-              <div><Save size={18} /><h2>Wedding & Venue Configuration</h2></div>
-              <p>These values are stored in settings.json and are loaded by every invitation.</p>
+          <>
+            <div className="admin-panel gallery-upload-panel">
+              <div className="panel-title">
+                <div><Upload size={18} /><h2>Invitation Gallery</h2></div>
+                <p>Upload JPG, PNG or WebP images. They appear on the invitation after upload.</p>
+              </div>
+              <label className="upload-control">
+                <span>Select images</span>
+                <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={uploadGalleryImages} />
+              </label>
+              {!!settings.gallery?.length && <div className="gallery-upload-list">
+                {settings.gallery.map((src, index) => (
+                  <div className="gallery-upload-item" key={`${src.slice(0, 30)}-${index}`}>
+                    <img src={src} alt={`Gallery preview ${index + 1}`} />
+                    <button type="button" className="danger-icon" title="Remove image" onClick={() => removeGalleryImage(index)}><Trash2 size={16} /></button>
+                  </div>
+                ))}
+              </div>}
             </div>
-            <div className="form-grid two">
-              {[
+
+            <form className="admin-panel settings-form" onSubmit={saveSettings}>
+              <div className="panel-title">
+                <div><Save size={18} /><h2>Wedding & Venue Configuration</h2></div>
+                <p>These values are stored in settings and are loaded by every invitation.</p>
+              </div>
+              <div className="form-grid two">
+                {[
                 ['coupleNames', 'Couple display names'],
                 ['groomName', 'Groom full name'],
                 ['brideName', 'Bride full name'],
@@ -401,17 +481,18 @@ export default function AdminPage() {
                 ['brideParents', "Bride's parents"],
                 ['contactOne', 'Contact number 1'],
                 ['contactTwo', 'Contact number 2']
-              ].map(([key, label]) => (
-                <label key={key}>
-                  <span>{label}</span>
-                  <input value={settings[key] || ''} onChange={(e) => setSettings({ ...settings, [key]: e.target.value })} />
-                </label>
-              ))}
-              <label className="full"><span>Landing message</span><textarea rows="3" value={settings.landingMessage || ''} onChange={(e) => setSettings({ ...settings, landingMessage: e.target.value })} /></label>
-              <label className="full"><span>Opening line</span><textarea rows="3" value={settings.openingLine || ''} onChange={(e) => setSettings({ ...settings, openingLine: e.target.value })} /></label>
-            </div>
-            <button className="primary-button"><Save size={17} /> Save Wedding Details</button>
-          </form>
+                ].map(([key, label]) => (
+                  <label key={key}>
+                    <span>{label}</span>
+                    <input value={settings[key] || ''} onChange={(e) => setSettings({ ...settings, [key]: e.target.value })} />
+                  </label>
+                ))}
+                <label className="full"><span>Landing message</span><textarea rows="3" value={settings.landingMessage || ''} onChange={(e) => setSettings({ ...settings, landingMessage: e.target.value })} /></label>
+                <label className="full"><span>Opening line</span><textarea rows="3" value={settings.openingLine || ''} onChange={(e) => setSettings({ ...settings, openingLine: e.target.value })} /></label>
+              </div>
+              <button className="primary-button"><Save size={17} /> Save Wedding Details</button>
+            </form>
+          </>
         )}
       </section>
     </main>

@@ -33,7 +33,7 @@ export default function FlipCountdown({ targetDate }) {
   }, [targetDate]);
 
   return (
-    <div className="countdown">
+    <div className="countdown" aria-label="Time until the wedding">
       <CountdownUnit label="Days" value={time.days} />
       <CountdownUnit label="Hours" value={time.hours} />
       <CountdownUnit label="Minutes" value={time.minutes} />

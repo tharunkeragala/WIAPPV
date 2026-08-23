@@ -236,6 +236,20 @@ app.put('/api/admin/settings', adminOnly, async (req, res) => {
   res.json(updated);
 });
 
+app.post('/api/admin/gallery', adminOnly, async (req, res) => {
+  const image = String(req.body?.image || '');
+  if (!/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(image) || image.length > 900000) {
+    return res.status(400).json({ message: 'Please upload a valid image smaller than 650 KB.' });
+  }
+
+  const settings = await readSettings();
+  const gallery = Array.isArray(settings.gallery) ? settings.gallery : [];
+  if (gallery.length >= 12) return res.status(400).json({ message: 'The gallery can contain up to 12 images.' });
+  const updated = { ...settings, gallery: [...gallery, image] };
+  await writeSettings(updated);
+  res.status(201).json(updated);
+});
+
 app.get('/api/admin/stats', adminOnly, async (_req, res) => {
   const invitees = await readInvitees();
   const rsvps = await readRsvps();

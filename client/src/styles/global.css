@@ -403,9 +403,10 @@ img { display: block; max-width: 100%; }
   .invite-hero h1 { font-size: 82px; }
   .hero-date-row { gap: 11px; font-size: 9px; }
   .hero-date-row strong { padding: 0 11px; }
-  .countdown { gap: 14px 8px; }
-  .countdown-unit { width: calc(50% - 8px); max-width: 92px; }
-  .countdown-value { min-height: 74px; font-size: 34px; }
+  .countdown { width: 100%; flex-wrap: nowrap; gap: 6px; }
+  .countdown-unit { width: calc(25% - 5px); min-width: 0; }
+  .countdown-value { min-height: 64px; font-size: clamp(22px, 8vw, 34px); }
+  .flip-label { font-size: 8px; letter-spacing: .1em; }
   .schedule-item { grid-template-columns: 1fr; gap: 8px; }
   .gallery-grid { grid-template-columns: 1fr; grid-auto-rows: 280px; }
   .gallery-item-1 { grid-column: auto; grid-row: auto; }
@@ -449,6 +450,14 @@ img { display: block; max-width: 100%; }
   flex-wrap: wrap;
   justify-content: flex-end;
 }
+.gallery-upload-panel .panel-title { margin-bottom: 16px; }
+.upload-control { display: inline-flex !important; margin: 0 !important; }
+.upload-control span { min-height: 40px; padding: 0 14px; display: inline-flex; align-items: center; border: 1px solid #ddd4ca; color: #5f5146; font-size: 12px !important; cursor: pointer; }
+.upload-control input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.gallery-upload-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin-top: 18px; }
+.gallery-upload-item { position: relative; aspect-ratio: 1; overflow: hidden; background: #eee8e1; }
+.gallery-upload-item img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-upload-item .danger-icon { position: absolute; top: 7px; right: 7px; background: rgba(255,255,255,.9); }
 .outline-admin-button,
 .save-row-button {
   min-height: 38px;
