@@ -71,7 +71,7 @@ export default function LandingPage() {
           <div className="mini-ornament light"><span /> <Heart size={14} fill="currentColor" /> <span /></div>
 
           <h1>{settings.coupleNames}</h1>
-          <p className="landing-subtitle">Together with their families, warmly invite you to celebrate their wedding.</p>
+          <p className="landing-subtitle">Together with our families, warmly invite you to celebrate our wedding.</p>
 
           <div className="landing-date-panel">
             <span className="landing-panel-label">The Reception</span>
